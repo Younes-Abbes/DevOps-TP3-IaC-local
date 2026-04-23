@@ -1,0 +1,38 @@
+name: 'Terraform CI/CD Pipeline'
+
+# S'exécute automatiquement sur chaque push vers la branche main
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  terraform:
+    name: 'Terraform laC'
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Checkout du code source
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    # 2. Setup Terraform (Configuration de l'environnement)
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: ">=1.0.0"
+
+    # 3. Init (Initialisation de l'état)
+    - name: Terraform Init
+      run: terraform init
+
+    # 4. Plan (Validation & Revue)
+    - name: Terraform Plan
+      id: plan
+      run: terraform plan
+      continue-on-error: false # Le Apply ne doit s'exécuter que si le Plan a réussi
+
+    # 5. Apply (Déploiement Continu)
+    # S'exécute uniquement si l'étape de Planification est un succès
+    - name: Terraform Apply
+      if: steps.plan.outcome == 'success'
+      run: terraform apply -auto-approve
