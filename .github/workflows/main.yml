@@ -3,7 +3,7 @@ name: 'Terraform CI/CD Pipeline'
 # S'exécute automatiquement sur chaque push vers la branche main
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "master" ]
 
 jobs:
   terraform:
